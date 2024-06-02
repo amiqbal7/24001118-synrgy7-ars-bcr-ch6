@@ -5,18 +5,8 @@ const cloudinary = require('../config/cloudinary')
 
 const router = Router();
 
-const { handleCreateNewCar, handleListCar, handleEditCarById, handleDeleteCar, handleGetCarById } = require('../handlers/car.ts');
+const { handleCreateNewCar, handleListCar, handleEditCarById, handleDeleteCar, handleGetCarById } = require('../../src/app/controllers/carsController');
 const { mUpload } = require('../middlewares/multer');
-
-interface ArrList {
-    id: number;
-    name: string;
-    price: string;
-    startRent: string;
-    endRent: string;
-    createdAt: string;
-    updatedAt: string;
-}
 
 
 // GET carlist

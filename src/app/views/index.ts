@@ -1,8 +1,10 @@
 import http from "http";
 import express from "express";
-import carsRouter from "./routes/cars.routes"
-import bodyParser from "body-parser";
-const db = require('./db/db');
+import carsRouter from "../../routes/cars.routes"
+import usersRouter from "../../routes/users.routes"
+import adminsRouter from "../../routes/admins.routes"
+const loopback = require("loopback");
+const db = require('../../db/db');
 
 db();
 
@@ -13,7 +15,10 @@ const app = express();
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
+
 app.use("/cars", carsRouter);
+app.use("/users", usersRouter);
+app.use("/admin", adminsRouter)
 
 
 

@@ -7,9 +7,9 @@ const config: { [key: string]: Knex.Config } = {
   development: {
     client: "postgresql",
     connection: {
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD
+      database: 'db_bcr',
+      user: 'postgres',
+      password: 'bolonperak'
     },
     pool: {
       min: 2,
@@ -17,7 +17,10 @@ const config: { [key: string]: Knex.Config } = {
     },
     migrations: {
       tableName: "knex_migrations"
-    }
+    },
+    seeds: {
+      directory: './seeds'
+  }
   }
 };
 

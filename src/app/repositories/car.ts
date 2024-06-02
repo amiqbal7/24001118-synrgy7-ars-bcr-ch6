@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { CarsModel } from '../models/CarsModel'; // Sesuaikan path dengan lokasi file CarsModel.ts
-import { v4 as uuidv4 } from 'uuid';
-const cloudinary = require('../config/cloudinary')
-import filterCars from '../utils/filter';
-const db = require('../db/db');
+import { CarsModel } from '../../app/models/CarsModel';
+const cloudinary = require('../../config/cloudinary')
+const db = require('../../db/db');
 
 db();
 

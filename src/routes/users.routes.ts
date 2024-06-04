@@ -6,18 +6,15 @@ const controller = require('../../src/app/controllers/usersController');
 // const { authMiddleware } = require('../../src/middlewares/authUsers');
 
 
-// GET carlist
-router.post("/register", controller.register);
+router.post("/auth/register_user", controller.registerUser);
 
-// router.get("/", controller.getUsers);
+router.post("/auth/register_admin", controller.authorizeSuperAdmin, controller.registerAdmin);
 
-// router.get("/:id", controller.getUserById);
+router.delete("/:id", controller.authorizeAdmin, controller.deleteUser)
 
-// router.delete("/:id", controller.deleteUser)
+router.post("/auth/login", controller.login)
 
-router.post("/login", controller.login)
-
-router.get('/whoami', controller.authorize, controller.whoami);
+router.get('/auth/whoami', controller.authorize, controller.whoami);
 
 
 

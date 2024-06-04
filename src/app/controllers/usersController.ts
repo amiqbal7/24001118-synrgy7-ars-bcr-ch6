@@ -28,19 +28,32 @@ const JWT_SECRET = process.env.JWT_SIGNATURE_KEY || "Rahasia";
     return jwt.sign(payload, JWT_SECRET);
   }
 
-  export const register = async (req: Request, res: Response): Promise<void> => {
+  export const registerUser = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, password, username } = req.body;
+      const { email, password, username, role } = req.body;
       const encryptedPassword = await encryptPassword(password);
   
-      const user = await UsersService.createUser({ email, password: encryptedPassword, username });
+      const user = await UsersService.createUser({ email, password: encryptedPassword, username, role });
   
-      res.status(201).json({
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        create_at: user.create_at,
-        updated_at: user.updated_at,
+      res.status(200).json({
+        status: true,
+        message: 'Successfully registered',
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Data tidak berhasil diinput.", error: err });
+    }
+  };
+
+  export const registerAdmin = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, password, username, role } = req.body;
+      const encryptedPassword = await encryptPassword(password);
+  
+      const user = await UsersService.createUser({ email, password: encryptedPassword, username, role });
+  
+      res.status(200).json({
+        status: true,
+        message: 'Successfully registered',
       });
     } catch (err) {
       res.status(500).json({ message: "Data tidak berhasil diinput.", error: err });
@@ -67,16 +80,16 @@ const JWT_SECRET = process.env.JWT_SIGNATURE_KEY || "Rahasia";
       const token = await createToken({
         id: user.id,
         email: user.email,
-        create_at: user.create_at,
+        created_at: user.created_at,
         updated_at: user.updated_at,
     })
 
-      res.status(201).json({
-        id: user.id,
-        email: user.email,
+      res.status(200).json({
+        status: true,
+        message: 'successfully login acoount',
         token: token,
-        create_at: user.create_at,
-        updated_at: user.updated_at,
+        data: user.email,
+        role: user.role
       });
     } catch (err) {
       res.status(500).json({ message: "Internal Server Error" });
@@ -84,14 +97,17 @@ const JWT_SECRET = process.env.JWT_SIGNATURE_KEY || "Rahasia";
   }
 
   export const whoami = async(req: User, res: Response): Promise<void> => {
-    res.status(200).json(req.user);
+    res.status(200).json({
+      message: 'successfully get current user',
+      data: req.user
+    });
   }
 
   export const authorize = async (req: User, res: Response, next: NextFunction): Promise<void> => {
     try {
       const bearerToken = req.headers.authorization;
       if (!bearerToken) {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ message: "Unauthorize" });
         return;
       }
 
@@ -106,119 +122,69 @@ const JWT_SECRET = process.env.JWT_SIGNATURE_KEY || "Rahasia";
 
       next();
     } catch (err) {
+      res.status(401).json({ message: "Unauthorizede" });
+    }
+  }
+
+  export const authorizeSuperAdmin = async (req: User, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const bearerToken = req.headers.authorization;
+      if (!bearerToken) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
+
+      const token = bearerToken.split("Bearer ")[1];
+      const tokenPayload = jwt.verify(token, JWT_SECRET) as any;
+
+      req.user = await UsersService.getUserById(tokenPayload.id);
+      if (req.user?.role !== 'superadmin') {
+        res.status(403).json({ message: "Forbidden" });
+        return;
+      }
+      next();
+    } catch (err) {
       res.status(401).json({ message: "Unauthorized" });
     }
   }
 
+  export const authorizeAdmin = async (req: User, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const bearerToken = req.headers.authorization;
+      if (!bearerToken) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
 
- 
-// export const register = async (req: Request, res: Response) => {
-//   try {
-//     const { username, email, password } = req.body;
-//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const token = bearerToken.split("Bearer ")[1];
+      const tokenPayload = jwt.verify(token, JWT_SECRET) as any;
 
-//     const data = await UsersService.createUser({ username, email, password: hashedPassword });
-//     res.status(200).json({
-//       status: true,
-//       message: 'Successfully created user',
-//       data: data
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       status: 'error',
-//       message: err || 'Failed to create user'
-//     });
-//   }
-// };
+      req.user = await UsersService.getUserById(tokenPayload.id);
+      if (req.user?.role !== 'superadmin' && req.user?.role !== 'admin') {
+        res.status(403).json({ message: "Forbidden" });
+        return;
+      }
+      next();
+    } catch (err) {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  }
 
-// export const login = async (req: Request, res: Response) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await UsersService.login(email);
-
-//     if (!user) {
-//       return res.status(401).json({
-//         status: 'error',
-//         message: 'Invalid email or password'
-//       });
-//     }
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) {
-//       return res.status(401).json({
-//         status: 'error',
-//         message: 'Invalid email or password'
-//       });
-//     }
-
-//     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
-
-//     res.status(200).json({
-//       status: true,
-//       message: 'Login successfuly',
-//       token: token,
-//       user: { id: user.id, username: user.username, email: user.email }
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       status: 'error',
-//       message: err || 'Failed to login'
-//     });
-//   }
-// };
-
-
-// export const getUsers = async (req: Request, res: Response) => {
-//     try {
-//         const users = await UsersService.listUsers();
-//         res.status(200).json({
-//             status: true,
-//             message: 'Successfully Get Users Data',
-//             data: users
-//         });
-//     } catch (err) {
-//         res.status(500).json({
-//             status: 'error',
-//             message: err
-//         });
-//     }
-
-// };
-
-// export const getUserById = async (req: Request, res: Response) => {
-//     try {
-//         const getId: number = Number(req.params.id);
-//         const users = await UsersService.getUserById(getId);
-//         res.status(200).json({
-//             status: true,
-//             message: `Successfully Get User ${getId}`,
-//             data: users 
-//         });    
-//     } catch (err) {
-//         res.status(500).json({
-//             status: 'error',
-//             message: err
-//         });
-//     }
-// }
-
-// export const deleteUser = async (req: Request, res: Response) => {
-//     try {
-//         const getId: number = Number(req.params.id);
-//         const userDelete = await UsersService.getUserById(getId);
-//         const users = await UsersService.listUsers();
-//         res.status(200).json({
-//             status: true,
-//             message: `Successfully Delete User ${getId}`,
-//             data: users
-//         })
-//     } catch (err) {
-//         res.status(500).json({
-//             status: 'error',
-//             message: err
-//         });
-//     }
-// };
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const getId: number = Number(req.params.id);
+        const userDelete = await UsersService.getUserById(getId);
+        res.status(200).json({
+            status: true,
+            message: `Successfully Delete User ${getId}`,
+        })
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            message: err
+        });
+    }
+};
 
 
 

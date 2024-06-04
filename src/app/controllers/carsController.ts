@@ -3,6 +3,7 @@ import CarsService from '../services/carsServices';
 
 interface MulterRequest extends Request {
   file: Express.Multer.File;
+  user: { username: string, id: number};
 }
 
 export const handleListCar = async (req: Request, res: Response): Promise<void> => {
@@ -10,7 +11,7 @@ export const handleListCar = async (req: Request, res: Response): Promise<void> 
     const cars = await CarsService.listCars();
     res.status(200).json({
       status: true,
-      message: 'OK',
+      message: 'Successfully Get Cars',
       data: cars,
     });
   } catch (err) {
@@ -25,11 +26,9 @@ export const handleDeleteCar = async (req: Request, res: Response): Promise<void
   try {
     const getId: number = Number(req.params.id);
     await CarsService.deleteCar(getId);
-    const carsGet = await CarsService.listCars();
     res.status(200).json({
       status: true,
       message: 'Successfully deleted car',
-      data: carsGet,
     });
   } catch (err) {
     res.status(500).json({
@@ -61,7 +60,9 @@ export const handleEditCarById = async (req: MulterRequest, res: Response): Prom
     const getId: number = Number(req.params.id);
     const carData = req.body;
     const file = req.file;
-    const updatedCar = await CarsService.updateCar(getId, carData, file);
+    const user = req.user.username;
+    // const userId = req.user.id;
+    const updatedCar = await CarsService.updateCar(getId, carData, file, user);
 
     res.status(200).json({
       status: true,
@@ -70,7 +71,7 @@ export const handleEditCarById = async (req: MulterRequest, res: Response): Prom
     });
   } catch (err) {
     res.status(500).json({
-      status: 'error',
+      status: err,
       message: 'Failed to update car',
     });
   }
@@ -78,20 +79,22 @@ export const handleEditCarById = async (req: MulterRequest, res: Response): Prom
 
 export const handleCreateNewCar = async (req: MulterRequest, res: Response): Promise<void> => {
   try {
-    const carData = req.body;
-    const file = req.file;
-    const newCar = await CarsService.createCar(carData, file);
+      const carData = req.body;
+      const file = req.file;
+      const user = req.user.username;
+      const userId = req.user.id;
 
-    res.status(201).json({
-      status: true,
-      message: 'Successfully created',
-      data: newCar
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Error creating car',
-      error: error
-    });
+      const newCar = await CarsService.createCar(carData, file, user, userId);
+
+      res.status(201).json({
+          status: true,
+          message: 'Successfully created',
+          data: newCar
+      });
+  } catch (err) {
+      res.status(500).json({
+          status: err,
+          message: 'Error creating car'
+      });
   }
 };

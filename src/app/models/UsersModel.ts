@@ -6,8 +6,10 @@ export class UsersModel extends Model {
     email!: string;
     password!: string;
     encryptedPassword!: string;
-    update_at!: string;
+    updated_at!: string;
     created_at!: string;
+    role!: string;
+    
 
     static get tableName(){
         return "users"

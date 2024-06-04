@@ -1,0 +1,506 @@
+openapi: 3.0.3
+info: 
+  title: API Binar Car Rental
+  description: API to manage rental car applications
+  version: 1.0.0
+servers: 
+  - url: https://localhost:3000
+    description: local server
+paths: 
+  /users/auth/register_user:           
+    post: 
+      summary: Register user account
+      tags: 
+        - Auth
+      requestBody: 
+        description: Create a new user account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses: 
+        '200': 
+          description: Successfully created account
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/RegisterAuthResponse'
+
+  /users/auth/register_admin:           
+    post: 
+      summary: Register admin account
+      tags: 
+        - Auth
+      requestBody: 
+        description: Create a new admin account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses: 
+        '200': 
+          description: Successfully created car
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/RegisterAuthResponse'
+
+  /users/auth/login:           
+    post: 
+      summary: Login 
+      tags: 
+        - Auth
+      requestBody: 
+        description: Login account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses: 
+        '200': 
+          description: Successfully created car
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/LoginAuthResponse'
+  /users/auth/whoami:           
+    post: 
+      summary: Get current user data 
+      tags: 
+        - Auth
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
+      responses: 
+        '200': 
+          description: Get data from current user
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/WhoamiResponse'
+    
+  /cars:
+    get: 
+      summary: GET list all cars
+      tags: 
+        - Cars
+      responses: 
+        '200': 
+          description: A list of cars
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/GetCarResponse'
+            
+    post: 
+      summary: Create a new car
+      description: Only admin access
+      tags: 
+        - Cars
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
+      requestBody: 
+        description: Create a new car
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarRequest'
+      responses: 
+        '200': 
+          description: Successfully created car
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CreateCarResponse'
+
+  /cars/:id:
+    delete: 
+      summary: Delete car
+      description: Only admin access
+      tags: 
+        - Cars
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
+      responses: 
+        '200': 
+          description: Successfully deleted car
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/DeleteCarResponse'
+    get: 
+      summary: GET car by id
+      tags: 
+        - Cars
+      responses: 
+        '200': 
+          description: Get a car by id
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/GetCarResponse'
+    update: 
+      summary: Update a car
+      description: Only admin access
+      tags: 
+        - Cars
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
+      requestBody: 
+        description: Create a new car
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarRequest'
+      responses: 
+        '200': 
+          description: Successfully updated car
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/UpdateCarResponse'
+
+  /users:
+    post: 
+      summary: Create a user
+      tags: 
+        - Users
+      requestBody: 
+        description: Create a user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestUser'
+      responses: 
+        '200': 
+          description: Successfully created user
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CreateUserResponse'
+  /users/:id:
+    get: 
+      summary: Get user by id
+      tags: 
+        - Users
+      responses: 
+        '200': 
+          description: Get list of users
+          content: 
+            application/json:
+              schema:  
+                $ref: '#/components/schemas/GetUserResponse'
+    delete: 
+      summary: Delete a user
+      description: Only admin access
+      tags: 
+        - Users
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
+      responses: 
+        '200': 
+          description: Delete a user
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/DeleteUserResponse'
+    update: 
+      summary: Update a user
+      description: Only admin access
+      tags: 
+        - Users
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
+      requestBody: 
+        description: Update a user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestUser'
+      responses: 
+        '200': 
+          description: Successfully updated a user
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/UpdateUserResponse'
+
+components:
+  schemas:
+    Users:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: 'iqbal'
+        email:
+          type: string
+          example: 'iqbal@example.com'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+        role:
+          type: string
+          example: 'admin'
+    Cars:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Fortuner'
+        availability:
+          type: boolean
+          example: true
+        price: 
+          type: string
+          example: 'Rp. 600.000,00'
+        startRent: 
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+        finishRent: 
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+        image_url: 
+          type: string
+          example: 'https://gambar.com'
+        created_by: 
+          type: string
+          example: 'admin 1'
+        updated_by: 
+          type: string
+          example: 'admin 1'
+        updated_at: 
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+        created_at: 
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+
+    CarRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'Fortuner'
+        availability:
+          type: boolean
+          example: true
+        price: 
+          type: string
+          example: 'Rp. 600.000,00'
+        startRent: 
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+        finishRent: 
+          type: string
+          format: date-time
+          example: '2023-06-01T10:00:00Z'
+        image_url: 
+          type: string
+          example: 'https://gambar.com'
+
+    DeleteCarResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully deleted car
+
+    UpdateCarResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Update car
+        data: 
+          $ref: '#/components/schemas/Cars'
+
+    CreateCarResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Create car
+        data: 
+          $ref: '#/components/schemas/Cars'
+
+    GetCarResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Get car
+        data: 
+          $ref: '#/components/schemas/Cars'
+
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: 'iqbal'
+        email:
+          type: string
+          example: 'iqbal@example.com'
+        role:
+          type: string
+          example: 'admin'
+        password:
+          type: string
+          example: 'coba123'
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'iqbal@example.com'
+        password:
+          type: string
+          example: 'coba123'
+    
+    CreateUserResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Create user
+        data: 
+          $ref: '#/components/schemas/Users'
+
+    WhoamiResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Get current user
+        data: 
+          $ref: '#/components/schemas/Users'
+
+    GetUserResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Get user
+        data: 
+          $ref: '#/components/schemas/Users'
+
+    UpdateUserResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Update user
+        data: 
+          $ref: '#/components/schemas/Users'
+
+    DeleteUserResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Delete user
+
+    RegisterAuthResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Create account
+
+    LoginAuthResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Successfully Login account
+

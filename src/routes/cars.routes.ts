@@ -1,7 +1,4 @@
-import {Router, Request, Response} from 'express';
-const cloudinary = require('../config/cloudinary')
-
-
+import {Router} from 'express';
 
 const router = Router();
 
@@ -11,19 +8,19 @@ const { mUpload } = require('../middlewares/multer');
 
 
 // GET carlist
-router.get("/", handleListCar);
+router.get("/list", handleListCar);
 
 // create new car
-router.post('/', controllerAdmin.authorizeAdmin,  mUpload.single('file'), handleCreateNewCar);
+router.post('/', controllerAdmin.authorizeAdmin, mUpload.single('image_url'), handleCreateNewCar);
 
 // delete car by id
 router.delete("/:id", controllerAdmin.authorizeAdmin, handleDeleteCar);
 
 // get car by id (spesifict)
-router.get('/:id', handleGetCarById);
+router.get('/:id', controllerAdmin.authorizeAdmin, handleGetCarById);
 
 // Update/Edit car
-router.put('/:id', controllerAdmin.authorizeAdmin, mUpload.single('file'), handleEditCarById);
+router.put('/:id', controllerAdmin.authorizeAdmin, mUpload.single('image_url'), handleEditCarById);
 
 
 

@@ -186,5 +186,21 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 };
 
+export const getUser = async (req: Request, res: Response) => {
+    try {
+        const users = await UsersService.listUsers()
+        res.status(200).json({
+            status: true,
+            message: `Successfully get users`,
+            data: users
+        })
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            message: err
+        });
+    }
+};
+
 
 

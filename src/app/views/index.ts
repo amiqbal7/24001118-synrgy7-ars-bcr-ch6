@@ -2,28 +2,32 @@ import http from "http";
 import express from "express";
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
-import carsRouter from "../../routes/cars.routes"
-import usersRouter from "../../routes/users.routes"
+import carsRouter from "../../routes/cars.routes";
+import usersRouter from "../../routes/users.routes";
+import carsServices from "../services/carsServices";
 const db = require('../../db/db');
+const cors = require("cors");
+const cron = require("node-cron")
 
 db();
+
 const port = 3000;
-const swaggerDocuments= YAML.load('././openapi.yaml');
+cron.schedule('0 0 * * *', () => {
+    carsServices.updateExpiredRentDates();
+  });
+const swaggerDocuments = YAML.load('././openapi.yaml');
 
+const app = express(); // Moved app declaration here
 
-
-
-const app = express();
+app.use(cors()); // Apply CORS middleware before routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocuments));
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
 
 app.use("/cars", carsRouter);
 app.use("/users", usersRouter);
 
-
 const server = http.createServer(app);
 server.listen(port, () => {
-    console.log(`APIServer listening on port ${port}`);
-})
+    console.log(`API Server listening on port ${port}`);
+});

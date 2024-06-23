@@ -6,6 +6,7 @@ export class CarsModel extends Model {
     name!: string;
     availability!: boolean;
     price!: string;
+    capacity!: number;
     startRent!: Date;
     finishRent!: Date;
     image_url?: string;

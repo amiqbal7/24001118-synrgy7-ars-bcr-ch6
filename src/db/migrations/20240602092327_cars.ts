@@ -7,9 +7,10 @@ export async function up(knex: Knex): Promise<void> {
         table.string('name', 100).notNullable();
         table.boolean('availability').notNullable().defaultTo(false);
         table.string('price', 200).notNullable();
+        table.integer('capacity', 200).notNullable();
         table.string('image_url', 255).nullable();
-        table.timestamp('startRent').notNullable();
-        table.timestamp('finishRent').notNullable();
+        table.timestamp('startRent').nullable();
+        table.timestamp('finishRent').nullable();
         table.string('created_by').notNullable();
         table.string('updated_by').nullable();
         table.timestamp('created_at').defaultTo(knex.fn.now());

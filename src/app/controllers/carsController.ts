@@ -86,7 +86,7 @@ export const handleCreateNewCar = async (req: MulterRequest, res: Response): Pro
 
       const newCar = await CarsService.createCar(carData, file, user, userId);
 
-      res.status(201).json({
+      res.status(200).json({
           status: true,
           message: 'Successfully created',
           data: newCar
@@ -95,6 +95,7 @@ export const handleCreateNewCar = async (req: MulterRequest, res: Response): Pro
       res.status(500).json({
           status: err,
           message: 'Error creating car'
+          
       });
   }
 };

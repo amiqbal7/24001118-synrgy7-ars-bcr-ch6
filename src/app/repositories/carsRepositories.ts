@@ -1,4 +1,5 @@
 // CarsRepository.ts
+import { fn } from 'objection';
 import { CarsModel } from '../../app/models/CarsModel';
 
 class CarsRepository {
@@ -20,6 +21,24 @@ class CarsRepository {
 
   async deleteCar(id: number): Promise<number> {
     return CarsModel.query().deleteById(id);
+  }
+
+  async findExpiredRentDates(): Promise<any[]> {
+    const today = new Date();
+    return CarsModel.query()
+      .whereNotNull('startRent')
+      .andWhere('startRent', '<', today)
+      .orWhereNotNull('finishRent')
+      .andWhere('finishRent', '<', today);
+  }
+
+  async updateRentDatesToNull(ids: number[]): Promise<number> {
+    return CarsModel.query()
+      .whereIn('id', ids)
+      .patch({
+        startRent: fn.coalesce(null),
+        finishRent: fn.coalesce(null),
+      });
   }
 }
 

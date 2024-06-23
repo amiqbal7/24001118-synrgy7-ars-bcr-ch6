@@ -19,6 +19,20 @@ interface CarData {
 
 
 class CarsService {
+  constructor(private carRepository = CarsRepository) {}
+
+  async updateExpiredRentDates(): Promise<void> {
+    try {
+      const expiredCars = await this.carRepository.findExpiredRentDates();
+      const expiredCarIds = expiredCars.map(car => car.id);
+      if (expiredCarIds.length > 0) {
+        await this.carRepository.updateRentDatesToNull(expiredCarIds);
+      }
+      console.log('Expired rent dates updated to null');
+    } catch (error) {
+      console.error('Error updating expired rent dates:', error);
+    }
+  }
   async listCars(): Promise<any> {
     return CarsRepository.getAllCars();
   }
@@ -57,8 +71,6 @@ class CarsService {
     });
 
     carData.image_url = result.url;
-    carData.image_url = result.url;
-    carData.created_by = adminName;
     carData.updated_by = adminName;
     carData.updated_at = new Date();
     // carData.user_id = userId;

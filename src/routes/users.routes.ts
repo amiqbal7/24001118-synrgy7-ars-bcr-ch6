@@ -16,6 +16,8 @@ router.post("/auth/login", controller.login)
 
 router.get('/auth/whoami', controller.authorize, controller.whoami);
 
+router.get('/list', controller.authorizeAdmin, controller.getUser);
+
 
 
 export default router;

@@ -1,5 +1,5 @@
 import type { Knex } from "knex";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -7,9 +7,11 @@ const config: { [key: string]: Knex.Config } = {
   development: {
     client: "postgresql",
     connection: {
-      database: 'db_bcr',
-      user: 'postgres',
-      password: 'bolonperak'
+      host: 'aws-0-ap-southeast-1.pooler.supabase.com',
+      database: 'postgres',
+      user: 'postgres.pgnjiswjftksqjhdxaje',
+      password: 'bolonperakE4',
+      port: 6543
     },
     pool: {
       min: 2,

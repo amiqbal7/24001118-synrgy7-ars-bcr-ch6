@@ -122,7 +122,7 @@ const JWT_SECRET = process.env.JWT_SIGNATURE_KEY || "Rahasia";
 
       next();
     } catch (err) {
-      res.status(401).json({ message: "Unauthorizede" });
+      res.status(401).json({ message: "Unauthorized" });
     }
   }
 

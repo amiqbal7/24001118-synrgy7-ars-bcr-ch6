@@ -83,7 +83,6 @@ export const handleCreateNewCar = async (req: MulterRequest, res: Response): Pro
       const file = req.file;
       const user = req.user.username;
       const userId = req.user.id;
-
       const newCar = await CarsService.createCar(carData, file, user, userId);
 
       res.status(200).json({

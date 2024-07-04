@@ -17,9 +17,9 @@ cron.schedule('0 0 * * *', () => {
   });
 const swaggerDocuments = YAML.load('././openapi.yaml');
 
-const app = express(); // Moved app declaration here
+const app = express();
 
-app.use(cors()); // Apply CORS middleware before routes
+app.use(cors()); 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocuments));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
